@@ -28,53 +28,103 @@ function redirect( $url ) {
   header('Location: ' . ROOT . $url );
 }
 
-function switch_lang($lang)
-{
-  $cookie_value=$lang;
-  setcookie(cookie_name, $cookie_value, time() + (86400 * 30));
-}
+
+
 /**
-  Retourne le code de langue.
-  @return string
- */
-function get_lang() {
-  // si le fichier de langue n'est pas trouvé, on le crée et sa valeur
-  // est celle imposée par la constante LANG_DEFAULT
-  if (!isset($_COOKIE[cookie_name]) || !is_lang_exist($_COOKIE[cookie_name]) ) {
-    $l = LANG_DEFAULT;
-    $cookie_value = $l;
-    setcookie(cookie_name, $cookie_value, time() + (86400 * 30));// 86400 = 1 day
-  }else{
-    // lire le choix de la langue enregistrée dans le fichier
-    $l = $_COOKIE[cookie_name];
+  function pour uploader des images
+  @param array $file contient $_FILE['poster'], name, tpm_name, type.
+  @return array $err type boolean et $filename qui est un string avec le nouveau nom de l'image
+*/
+  /**
+   * [add_images description]
+   * @param [array] $file [prend la valeur de $_FILES['poster']]
+   */
+function add_images($file){
+  /*on regarde le type MIME de l'image et on fait le traitement si le type est jpeg pjpeg ou png*/
+  if ($file['type']=='image/jpeg'||$file['type']=='image/pjpeg'||$file['type']=='image/png') {
+    /*création de dir2save qui reférence le répertoir de sauvegarde des images*/
+    $dir2save = ROOT_DIR . '/assets/img/films';
+    /*nom temporel de l'image*/
+    $image_source = $file['tmp_name'];
+    /*lister les dimensions de l'image*/
+    list($width, $height) = getimagesize($image_source);
+    /*si l'image est un jpeg ou un pjpeg*/
+    if ($file['type']=='image/jpeg'||$file['type']=='image/pjpeg') {
+      // lire l'image d'origine
+      $src_image = imagecreatefromjpeg( $image_source );
+    }else{
+      //si l'image est un png
+      $src_image = imagecreatefrompng( $image_source );
+    }
+    // définir une nouvelle image avec les dimensions autorisés new_width et new_height
+    $new_width=800;
+    //new height= 800/(width/height)
+    $new_height=$new_width/($width/$height);
+    //Retourne un identifiant de ressource d'image $dst_image
+    $dst_image = ImageCreateTrueColor( $new_width, $new_height );
+    //retaillement de l'image
+    imagecopyResampled( $dst_image, $src_image, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
+    //création d'une image jpeg
+    imagejpeg( $dst_image, $image_source );
+    // effacer les zones mémoire
+    imagedestroy($src_image);
+    imagedestroy($dst_image);
+    //decomposition du nom de l'image et son extension
+    $path_parts = pathinfo($file["name"]);
+    //ajout du timestamp
+    $filename = $path_parts['filename']."_".microtime(true).'.'.$path_parts['extension'];
+    //destination de l'image
+    $image_dest = "$dir2save/$filename";
+    //vérification que le téléchargement c'est bien réalisé
+    if (move_uploaded_file( $image_source, $image_dest )) {
+    //debug( "Le fichier est valide; il a été téléchargé avec succès. \n" );
+    $error=false;
+    } else {
+    //debug( " PROBLÈME pendant le téléchargement du fichier!!\n" );
+    $error=true;
+    }
+  }else {
+  //debug( " PROBLÈME le fichier n'est pas un png!!\n" );
+  $error=true;
+  $filename="";
   }
-  return $l;
+  return array($error,$filename);
 }
 
-/**
-  Retourne les messages associés au code de langue.
-  Les messages sont placés dans un tableau associatif $TEXT.
- */
-function get_lang_messages($lang) {
-  global $TEXT;
-
-  include LANGS_PATH . $lang . '.php';
-}
 
 /**
-  Indique si la langue existe.
-  @param  string  $lang2check  le nom de langue à évaluer
-  @return boolean.
- */
-function is_lang_exist($lang2check) {
-
-  // lire toutes les langues
-  $langs = explode(',', LANGS);
-  foreach($langs as $lang) {
-    if ($lang2check == trim($lang) ) {
-      return true;
+@param array  $file qui contient le type, le name et toutes info $_FILE['poster']
+@param array $data qui contient $_POST
+@return array $err type boolean et $movie qui rajoute a $_FILE['poster'] la variable $fname;
+*/
+function isPosterSet($file,$data){
+  $movie=$data;
+  if (!empty($file['poster']['name'])) {
+    list($err,$fname)=add_images($file['poster']);
+    if($err!=true){
+      $movie['poster']=$fname;
+      $err=false;
+    }
+    else{
+      $err=true;
     }
   }
-  return false;
+  return array($err,$movie);
+}
+/**
+Effacer une image dans le dossier /assets/img/films.
+@param $image est le string
+le nom du fichier image à effacer.
+@return l'erreur $err type boolean
+*/
+function deleteImage( $image )
+{
+  $dir2destroy = ROOT_DIR . '/assets/img/films/'.$image;
+  $err=unlink($dir2destroy);
+  if ($err==false) {
+    return $err;
+  }else{
+    echo 'good';
+  }
 }
 ?>

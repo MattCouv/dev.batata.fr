@@ -9,7 +9,20 @@ $command = get_command();
 if (''==$command||'home'==$command){
 	home_action();
 }
-
+elseif ('manage'==$command) {
+	manage_action();
+}
+elseif ('add-work'==$command) {
+	addwork_action();
+}
+elseif ('save-item'==$command && isset($_POST)) {
+	save_item_action($_POST);
+	//redirect('show-items');
+}
+elseif('show-items' == $command)
+{
+	get_items();
+}
 // affiche la page 404
 else{
 	header('Status: 404 Not Found');

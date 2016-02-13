@@ -2,7 +2,7 @@
 /* Set internal character encoding to UTF-8 */
 mb_internal_encoding("UTF-8");
 /** Nom de la base de données */
-define('DB_NAME', '');
+define('DB_NAME', 'batatadb');
 /** Utilisateur de la base de données MySQL. */
 define('DB_USER', 'root');
 /** Mot de passe de la base de données MySQL. */
@@ -18,7 +18,7 @@ define('DB_PERSISTANT', true);
 define('TABLE_PREFIX', '');
 
 /** indique si le débuguage est activé */
-define('DEBUG'			, true);
+define('DEBUG', true);
 
 /** indique vers quel périphérique vont être dirigés les messags de débuguage
     2 valeurs sont possibles :
@@ -36,7 +36,7 @@ define('DS', '/');
 // define('ROOT', 'http://mcouvreur.mmi-angouleme.fr' . ROOT_URL);
 // config en local
 define('ROOT_URL', DS.'dev.batata.fr'.DS); //avec rewriting
-define('ROOT', 'http://localhost:8080' . ROOT_URL);
+define('ROOT', 'http://localhost:8000' . ROOT_URL);
 /** Chemin absolu vers le dossier de l'application. */
 define('ROOT_DIR', dirname(__FILE__).DS);
 ?>

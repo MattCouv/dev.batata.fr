@@ -6,7 +6,7 @@ var gulp 		= require('gulp'),
 	uglify      = require('gulp-uglify'),
 	minifyCss   = require('gulp-minify-css'),
 	autoprefixer = require('gulp-autoprefixer'),
-	browserSync = require('browser-sync').create();;
+	browserSync = require('browser-sync').create();
 gulp.task('sass', function () {
   return gulp.src('./_scss/main.scss')
   	.pipe(sass({
@@ -41,7 +41,7 @@ gulp.task('js-watch', ['js'], function(){
 
 gulp.task('serve', function() {
     browserSync.init({
-        proxy: "localhost:8000/dev.matthieu.fr",
+        proxy: "localhost:8000/dev.batata.fr",
         port: 8080,
         open: true,
         notify: true

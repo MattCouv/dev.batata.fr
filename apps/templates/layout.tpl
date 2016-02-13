@@ -20,9 +20,6 @@
 <body>
 <div class="wrapper">
   {block name=body}{/block}
-  	<div class="footer">
-			<p>© Copyright 2016 Batata</p>
-		</div>
 </div>
   <!-- @@@ JS -->
 <script src="assets/js/app.min.js"></script>

@@ -40,7 +40,6 @@ class Base {
    * @return integer  identifiant ajouté.
    */
   public function add( $datas ) {
-
     return $this->fpdo->insertInto( $this->table )->values( $datas )->execute();
   }
 
